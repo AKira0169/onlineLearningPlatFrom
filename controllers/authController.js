@@ -39,7 +39,7 @@ exports.signUp = async (req, res, next) => {
     });
   }
 };
-exports.login = async (req, res, next) => {
+exports.logIn = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
