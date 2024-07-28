@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const promisify = require("util").promisify;
 const User = require("../models/usersModel");
 
 const signToken = (id) =>
@@ -67,13 +67,8 @@ exports.protect = async (req, res, next) => {
   try {
     //step one get the token check if it there
     let token;
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    } else if (req.cookies.jwt) {
+    console.log(req.cookies.jwt);
+    if (req.cookies.jwt) {
       token = req.cookies.jwt;
     }
     if (!token) {
@@ -84,6 +79,7 @@ exports.protect = async (req, res, next) => {
     }
     //verification token
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    console.log(decoded);
     // check if the user is still exists
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
@@ -92,7 +88,6 @@ exports.protect = async (req, res, next) => {
         message: "The user belonging to this token does no longer exist",
       });
     }
-    //check if the user changed password after the token was issued
 
     req.user = currentUser;
     res.locals.user = currentUser;
