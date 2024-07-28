@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/signUp", authController.signUp);
 router.post("/logIn", authController.logIn);
-router.use(authController.protect, authorization("admin"));
+router.use(authController.protect, authorization.restrictTo("admin"));
 router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getUser);
 
