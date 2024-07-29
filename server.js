@@ -8,7 +8,7 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 7000;
 mongoose.connect(DB).then(() => {
   // eslint-disable-next-line no-console
   console.log("Database connected successfully");
