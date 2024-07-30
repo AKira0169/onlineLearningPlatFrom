@@ -9,6 +9,7 @@ app.use(cookieParser());
 
 // Define routes
 const usersRoutes = require("./routes/usersRoutes");
+
 app.use("/api/v1/users", usersRoutes);
 
 // Global error handling middleware
