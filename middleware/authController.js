@@ -1,11 +1,13 @@
 const jwt = require("jsonwebtoken");
 const promisify = require("util").promisify;
 const User = require("../models/usersModel");
+const expressAsyncHandler = require('express-async-handler');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
+
 const createSendToken = (user, statusCode, res) => {
   const cookieOptions = {
     expires: new Date(
@@ -17,85 +19,63 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined;
-  res.status(statusCode).json({ status: "success", token, date: { user } });
+  res.status(statusCode).json({ status: "success", token, data: { user } });
 };
 
-exports.signUp = async (req, res, next) => {
+exports.signUp = expressAsyncHandler(async (req, res, next) => {
   console.log(req.body);
-  try {
-    const user = await User.create({
-      userName: req.body.userName,
-      fristName: req.body.fristName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
-    });
-    createSendToken(user, 201, res);
-  } catch (err) {
-    res.status(400).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
-exports.logIn = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Please provide email and password",
-      });
-    }
-    const user = await User.findOne({ email }).select("+password");
-    if (!user || !(await user.correctpassword(password, user.password))) {
-      return res.status(401).json({
-        status: "fail",
-        message: "Incorrect email or password",
-      });
-    }
-    createSendToken(user, 200, res);
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
-exports.protect = async (req, res, next) => {
-  try {
-    //step one get the token check if it there
-    let token;
-    console.log(req.cookies.jwt);
-    if (req.cookies.jwt) {
-      token = req.cookies.jwt;
-    }
-    if (!token) {
-      return res.status(401).json({
-        status: "fail",
-        message: "You are not logged in! Please log in to get access",
-      });
-    }
-    //verification token
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-    console.log(decoded);
-    // check if the user is still exists
-    const currentUser = await User.findById(decoded.id);
-    if (!currentUser) {
-      return res.status(401).json({
-        status: "fail",
-        message: "The user belonging to this token does no longer exist",
-      });
-    }
+  const user = await User.create({
+    userName: req.body.userName,
+    fristName: req.body.fristName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  });
+  createSendToken(user, 201, res);
+});
 
-    req.user = currentUser;
-    res.locals.user = currentUser;
-    next();
-  } catch (err) {
-    res.status(500).json({
+exports.logIn = expressAsyncHandler(async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
       status: "fail",
-      message: err,
+      message: "Please provide email and password",
     });
   }
-};
+  const user = await User.findOne({ email }).select("+password");
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return res.status(401).json({
+      status: "fail",
+      message: "Incorrect email or password",
+    });
+  }
+  createSendToken(user, 200, res);
+});
+
+exports.protect = expressAsyncHandler(async (req, res, next) => {
+  let token;
+  console.log(req.cookies.jwt);
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+  if (!token) {
+    return res.status(401).json({
+      status: "fail",
+      message: "You are not logged in! Please log in to get access",
+    });
+  }
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  console.log(decoded);
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return res.status(401).json({
+      status: "fail",
+      message: "The user belonging to this token does no longer exist",
+    });
+  }
+
+  req.user = currentUser;
+  res.locals.user = currentUser;
+  next();
+});
