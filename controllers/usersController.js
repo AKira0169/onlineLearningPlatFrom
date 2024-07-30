@@ -1,94 +1,65 @@
 const User = require("../models/usersModel");
-const expressAsyncHandler = require('express-async-handler');
-const { notFound } = require('../middleware/errorHandler');
-const mongoose=require('mongoose')
-
+const expressAsyncHandler = require("express-async-handler");
+const AppError = require("../utils/appError");
 
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
-    const users = await User.find();
-    if (!users || users.length === 0) {
-    }
-    res.status(200).json({
-        status: "success",
-        results: users.length,
-        data: {
-            users,
-        },
-    });
+  const users = await User.find();
+  if (!users || users.length === 0) {
+    return next(new AppError("No users found", 404));
+  }
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    data: {
+      users,
+    },
+  });
 });
-
-
 
 exports.getUser = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
- 
-  if (!mongoose.isValidObjectId(id)) {
-    const error = new Error(`Invalid user ID format: ${id}`);
-    error.statusCode = 404; 
-    return next(error); r
-  }
-
   const user = await User.findById(id);
 
-  if (!user) {
-    const error = new Error(`User not found with id: ${id}`);
-    error.statusCode = 404; 
-    return next(error);
+  if (user) {
+    return next(new AppError(`User not found with id: ${id}`, 404));
   }
-
-
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
-      user
-    }
+      user,
+    },
   });
 });
-
 
 exports.updateUser = expressAsyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const updates = req.body;
 
-  try {
-  
-    const user = await User.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true
-    });
+  const user = await User.findByIdAndUpdate(id, updates, {
+    new: true,
+    runValidators: true,
+  });
 
-  
-    if (!user) {
-      const error = new Error(`User not found with id: ${id}`);
-      error.statusCode = 404; 
-      return next(error); 
-    }
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user
-      }
-    });
-  } catch (err) {
- 
-    if (err.kind === 'ObjectId') {
-      err.statusCode = 404; 
-    }
-    next(err); 
+  if (!user) {
+    return next(new AppError(`User not found with id: ${id}`, 404));
   }
+  res.status(200).json({
+    status: "success",
+    data: {
+      user,
+    },
+  });
 });
 
 // Delete User
 exports.deleteUser = expressAsyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) {
-    return next(new Error(`No user found with that ID: ${req.params.id}`));
+    return next(new AppError(`User not found with id: ${req.params.id}`, 404));
   }
   res.status(204).json({
     status: "success",
     data: null,
   });
 });
-
-

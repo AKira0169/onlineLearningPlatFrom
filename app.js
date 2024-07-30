@@ -1,20 +1,18 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const cookieParser = require('cookie-parser');
-const { errorHandler, notFound } = require('./middleware/errorHandler'); // Adjust path as needed
-
+const cookieParser = require("cookie-parser");
+const globalErrorHandler = require("./utils/errorHandler"); // Adjust the path to your global error handler
 // Middleware
+
 app.use(express.json());
 app.use(cookieParser());
 
 // Define routes
-const usersRoutes = require('./routes/usersRoutes');
-app.use('/api/v1/users', usersRoutes);
-
-// Middleware for handling 404 errors
-app.use(notFound);
+const usersRoutes = require("./routes/usersRoutes");
+app.use("/api/v1/users", usersRoutes);
 
 // Global error handling middleware
-app.use(errorHandler);
+
+app.use(globalErrorHandler);
 
 module.exports = app;
