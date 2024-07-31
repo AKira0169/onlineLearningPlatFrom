@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Define routes
-const usersRoutes = require("./routes/usersRoutes");
+const usersRoutes = require("./src/users/usersRoutes");
 
 app.use("/api/v1/users", usersRoutes);
 

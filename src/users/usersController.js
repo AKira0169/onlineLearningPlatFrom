@@ -1,6 +1,6 @@
-const User = require("../models/usersModel");
+const User = require("./usersModel");
 const expressAsyncHandler = require("express-async-handler");
-const AppError = require("../utils/appError");
+const AppError = require("../../utils/appError");
 
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find();

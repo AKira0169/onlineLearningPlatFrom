@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const promisify = require("util").promisify;
-const User = require("../models/usersModel");
-const expressAsyncHandler = require('express-async-handler');
+const User = require("../src/users/usersModel");
+const expressAsyncHandler = require("express-async-handler");
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
