@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const lessonSchema = new mongoose.Schema(
   {
@@ -21,7 +21,7 @@ const lessonSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const moduleSchema = new mongoose.Schema(
@@ -38,7 +38,7 @@ const moduleSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const courseSchema = new mongoose.Schema(
@@ -62,16 +62,16 @@ const courseSchema = new mongoose.Schema(
     },
     level: {
       type: String,
-      enum: ["Beginner", "Intermediate", "Advanced"],
+      enum: ['Beginner', 'Intermediate', 'Advanced'],
       required: true,
     },
     modules: [moduleSchema],
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const Course = mongoose.model("Course", courseSchema);
+const Course = mongoose.model('Course', courseSchema);
 
 module.exports = Course;
