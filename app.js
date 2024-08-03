@@ -11,9 +11,11 @@ app.use(cookieParser());
 // Define routes
 const usersRoutes = require('./src/users/usersRoutes');
 const courseRoutes = require('./src/courses/courseRoutes');
+const paymentRoutes = require('./src/payment/paymentRoutes');
 
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/courses', courseRoutes);
+app.use('/api/v1/payment', paymentRoutes);
 // Global error handling middleware
 
 app.all('*', (req, res, next) => {

@@ -29,12 +29,6 @@ const userSchema = new mongoose.Schema(
       enum: ['student', 'instructor', 'admin'],
       default: 'student',
     },
-    subscribedCourses: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
-      },
-    ],
     password: {
       type: String,
       required: [true, 'Please provide a password'],
