@@ -12,11 +12,11 @@ const lessonSchema = new mongoose.Schema(
     },
     videoUrl: {
       type: String,
-      required: true, // Assuming each lesson has an associated video
+      required: true,
     },
     order: {
       type: Number,
-      required: true, // To specify the order of lessons
+      required: true,
     },
   },
   {
@@ -66,6 +66,22 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
     modules: [moduleSchema],
+    categories: {
+      type: [String],
+    },
+    tags: {
+      type: [String],
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    enrolledStudents: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     timestamps: true,

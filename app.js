@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
-const globalErrorHandler = require('./utils/errorHandler'); // Adjust the path to your global error handler
+const globalErrorHandler = require('./middleware/errorHandler'); // Adjust the path to your global error handler
 // Middleware
 
 app.use(express.json());

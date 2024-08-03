@@ -1,4 +1,4 @@
-const AppError = require('./appError');
+const AppError = require('../utils/appError');
 
 const sendErrorDev = (err, req, res) => {
   // Check if the request is for an API route

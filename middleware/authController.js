@@ -21,7 +21,6 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signUp = expressAsyncHandler(async (req, res, next) => {
-  console.log(req.body);
   const user = await User.create({
     userName: req.body.userName,
     fristName: req.body.fristName,
@@ -53,7 +52,6 @@ exports.logIn = expressAsyncHandler(async (req, res, next) => {
 
 exports.protect = expressAsyncHandler(async (req, res, next) => {
   let token;
-  console.log(req.cookies.jwt);
   if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -64,7 +62,6 @@ exports.protect = expressAsyncHandler(async (req, res, next) => {
     });
   }
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
     return res.status(401).json({

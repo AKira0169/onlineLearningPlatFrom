@@ -14,6 +14,7 @@ router.get(
 
   courseController.getLesson,
 );
+router.get('/filter', courseController.getCoursesByCategoryOrTag);
 
 router.use(authorization.restrictTo('admin', 'instructor'));
 
@@ -21,6 +22,7 @@ router.route('/').get(courseController.getAllCourses);
 router.post('/initCourse', courseController.initCourse);
 router.post('/createModuleForCourse/:courseId', courseController.createModuleForCourse);
 router.post('/createLesson/:courseId/:moduleId', uploadVideo.single('video'), courseController.createLesson);
+router.patch('/updateCourse/:courseId', courseController.updateCourse);
 
 router.route('/upload').post(uploadVideo.single('video'), courseController.uploadVideo);
 

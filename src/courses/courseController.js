@@ -39,7 +39,7 @@ exports.uploadVideo = expressAsyncHandler(async (req, res, next) => {
 });
 
 exports.initCourse = expressAsyncHandler(async (req, res, next) => {
-  const { title, description, instructor, duration, level, modules } = req.body;
+  const { title, description, instructor, duration, level, modules, categories, tags, price } = req.body;
   const newCourse = new Course({
     title,
     description,
@@ -47,6 +47,9 @@ exports.initCourse = expressAsyncHandler(async (req, res, next) => {
     duration,
     level,
     modules,
+    categories,
+    tags,
+    price,
   });
   const savedCourse = await newCourse.save();
   res.status(201).json(savedCourse);
@@ -122,6 +125,32 @@ exports.updateCourse = expressAsyncHandler(async (req, res, next) => {
     return next(new AppError('Course not found', 404));
   }
   res.status(200).json(updatedCourse);
+});
+
+exports.getCoursesByCategoryOrTag = expressAsyncHandler(async (req, res, next) => {
+  const { category, tag } = req.query;
+  let filter = {};
+
+  if (category) {
+    filter.categories = category;
+  }
+
+  if (tag) {
+    filter.tags = tag;
+  }
+
+  const courses = await Course.find(filter);
+  if (!courses || courses.length === 0) {
+    return next(new AppError('No courses found', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    results: courses.length,
+    data: {
+      courses,
+    },
+  });
 });
 
 exports.deleteCourse = expressAsyncHandler(async (req, res, next) => {
