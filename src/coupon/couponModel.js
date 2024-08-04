@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 
 const socialInteractionSchema = new Schema(
   {
-    course: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Course',
-    },
+    course: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+      },
+    ],
     discount: Number,
     couponCode: String,
   },
