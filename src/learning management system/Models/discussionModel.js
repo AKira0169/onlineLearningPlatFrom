@@ -1,12 +1,17 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const discussionSchema = new Schema(
   {
-    course: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Course',
+    referenceType: {
+      type: String,
+      enum: ['Course', 'Lesson'],
       required: true,
+    },
+    referenceId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      refPath: 'referenceType', // This uses the value of `referenceType` to determine which model to reference
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,6 +53,6 @@ const discussionSchema = new Schema(
   }
 );
 
-const Discussion = mongoose.model("Discussion", discussionSchema);
+const Discussion = mongoose.model('Discussion', discussionSchema);
 
 module.exports = Discussion;

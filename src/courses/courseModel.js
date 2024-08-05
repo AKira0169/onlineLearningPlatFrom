@@ -6,6 +6,9 @@ const lessonSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    disucssion:{
+      type:mongoose.Schema.Types.ObjectId,
+    },
     duration: {
       type: Number,
       required: true,
