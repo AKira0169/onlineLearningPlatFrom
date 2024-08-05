@@ -8,6 +8,7 @@ const lessonSchema = new mongoose.Schema(
     },
     disucssion:{
       type:mongoose.Schema.Types.ObjectId,
+      ref:"Disuccsion"
     },
     duration: {
       type: Number,
