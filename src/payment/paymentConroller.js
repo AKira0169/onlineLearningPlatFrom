@@ -1,15 +1,19 @@
 const axios = require('axios');
 const Payment = require('./paymentModel');
 const crypto = require('crypto');
-require('dotenv').config();
+const AppError = require('../../utils/appError'); // Adjust the path to your AppError file
 
 const PAYMOB_API_KEY = process.env.PAYMOB_API_KEY;
-const PAYMOB_INTEGRATION_ID = process.env.PAYMOB_INTEGRATION_ID;
+const PAYMOB_INTEGRATION_ID_Online_Card = process.env.PAYMOB_INTEGRATION_ID_Online_Card;
+const PAYMOB_INTEGRATION_ID_Mobile_Wallet = process.env.PAYMOB_INTEGRATION_ID_Mobile_Wallet;
 const SECRET_KEY = process.env.SECRET_KEY;
 
-exports.initiate = async (req, res) => {
+// Utility function to add a delay
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+exports.initiate = async (req, res, next) => {
   try {
-    const { amount, currency, customer } = req.body;
+    const { amount, currency, customer, paymentMethod } = req.body;
 
     // Step 1: Authentication
     const authResponse = await axios.post('https://accept.paymob.com/api/auth/tokens', {
@@ -17,10 +21,14 @@ exports.initiate = async (req, res) => {
     });
 
     if (!authResponse.data.token) {
-      throw new Error('Failed to obtain authentication token');
+      return next(new AppError('Failed to obtain authentication token', 500));
     }
 
     const token = authResponse.data.token;
+    console.log(token);
+
+    // Add a delay before the next request
+    await delay(2000);
 
     // Step 2: Create Order
     const orderResponse = await axios.post('https://accept.paymob.com/api/ecommerce/orders', {
@@ -28,14 +36,41 @@ exports.initiate = async (req, res) => {
       delivery_needed: false,
       amount_cents: amount,
       currency,
-      items: [],
+      items: [
+        {
+          name: 'Service',
+          amount_cents: amount,
+          description: 'Payment for services',
+        },
+      ],
     });
 
     if (!orderResponse.data.id) {
-      throw new Error('Failed to create order');
+      return next(new AppError('Failed to create order', 500));
     }
+    console.log('iam orderResponse', orderResponse);
 
     const orderId = orderResponse.data.id;
+
+    // Ensure customer billing data is complete
+    const billingData = {
+      apartment: customer.apartment || 'NA',
+      email: customer.email || 'test@example.com',
+      floor: customer.floor || 'NA',
+      first_name: customer.first_name || 'Test',
+      street: customer.street || 'NA',
+      building: customer.building || 'NA',
+      phone_number: customer.phone_number || '+201143776030',
+      shipping_method: 'NA',
+      postal_code: customer.postal_code || 'NA',
+      city: customer.city || 'Cairo',
+      country: customer.country || 'EGY',
+      last_name: customer.last_name || 'User',
+      state: customer.state || 'NA',
+    };
+
+    // Add a delay before the next request
+    await delay(1000);
 
     // Step 3: Payment Key Request
     const paymentKeyResponse = await axios.post('https://accept.paymob.com/api/acceptance/payment_keys', {
@@ -43,21 +78,21 @@ exports.initiate = async (req, res) => {
       amount_cents: amount,
       expiration: 3600,
       order_id: orderId,
-      billing_data: customer,
+      billing_data: billingData,
       currency,
-      integration_id: PAYMOB_INTEGRATION_ID,
+      integration_id: PAYMOB_INTEGRATION_ID_Online_Card,
     });
 
     if (!paymentKeyResponse.data.token) {
-      throw new Error('Failed to obtain payment key');
+      return next(new AppError('Failed to obtain payment key', 500));
     }
 
     const paymentKey = paymentKeyResponse.data.token;
-
+    // res.redirect(`https://accept.paymob.com/api/acceptance/iframes/859570?payment_token=${paymentKey}`);
     res.json({ paymentKey });
   } catch (error) {
     console.error('Error initiating payment:', error.message);
-    res.status(500).json({ error: 'Payment initiation failed' });
+    return next(new AppError('Payment initiation failed', 500));
   }
 };
 
