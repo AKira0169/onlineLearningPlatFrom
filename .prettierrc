@@ -1,0 +1,35 @@
+{
+  "semi": false,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "avoid",
+  "printWidth": 120,
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "options": {
+        "semi": true
+      }
+    },
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "html",
+        "htmlWhitespaceSensitivity": "ignore",
+        "printWidth": 120,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.ejs"],
+      "options": {
+        "parser": "jsx",
+        "htmlWhitespaceSensitivity": "ignore",
+        "printWidth": 120,
+        "tabWidth": 2
+      }
+    }
+  ]
+}

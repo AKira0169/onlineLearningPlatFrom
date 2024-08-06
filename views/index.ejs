@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+
+  <form method="post" action="/api/v1/users/logIn">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <input type="submit" value="Submit">
+  </form>
+
+  <button type="button" class="pay">pay</button>
+
+</body>
+
+
+<script>
+  const pay = document.querySelector('.pay');
+
+  pay.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/api/v1/payment/paymob/initiate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: 1000,
+          currency: 'EGP',
+          customer: {
+            apartment: '12',
+            email: 'customer@example.com',
+            floor: '1',
+            first_name: 'John',
+            street: 'Main St',
+            building: '123',
+            phone_number: '+201143776030',
+            shipping_method: 'NA',
+            postal_code: '12345',
+            city: 'Cairo',
+            country: 'EGY',
+            last_name: 'Doe',
+            state: 'Cairo'
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initiate payment');
+      }
+
+      const data = await response.json();
+      const paymentKey = data.paymentKey;
+
+      // Redirect to the payment page
+      window.location.href = `https://accept.paymob.com/api/acceptance/iframes/859570?payment_token=${paymentKey}`;
+    } catch (error) {
+      console.error('Error initiating payment:', error.message);
+    }
+  });
+</script>
+
+</html>

@@ -1,14 +1,14 @@
-const User = require("./usersModel");
-const expressAsyncHandler = require("express-async-handler");
-const AppError = require("../../utils/appError");
+const User = require('./usersModel');
+const expressAsyncHandler = require('express-async-handler');
+const AppError = require('../../utils/appError');
 
 exports.getAllUsers = expressAsyncHandler(async (req, res) => {
   const users = await User.find();
   if (!users || users.length === 0) {
-    return next(new AppError("No users found", 404));
+    return next(new AppError('No users found', 404));
   }
   res.status(200).json({
-    status: "success",
+    status: 'success',
     results: users.length,
     data: {
       users,
@@ -25,7 +25,7 @@ exports.getUser = expressAsyncHandler(async (req, res, next) => {
     return next(new AppError(`User not found with id: ${id}`, 404));
   }
   res.status(200).json({
-    status: "success",
+    status: 'success',
     data: {
       user,
     },
@@ -45,7 +45,7 @@ exports.updateUser = expressAsyncHandler(async (req, res, next) => {
     return next(new AppError(`User not found with id: ${id}`, 404));
   }
   res.status(200).json({
-    status: "success",
+    status: 'success',
     data: {
       user,
     },
@@ -59,7 +59,7 @@ exports.deleteUser = expressAsyncHandler(async (req, res, next) => {
     return next(new AppError(`User not found with id: ${req.params.id}`, 404));
   }
   res.status(204).json({
-    status: "success",
+    status: 'success',
     data: null,
   });
 });
