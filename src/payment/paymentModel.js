@@ -15,7 +15,7 @@ const paymentSchema = new mongoose.Schema({
   amount: Number,
   currency: String,
   customer: Object,
-  status: String,
+  status: Boolean,
   hmac: String,
   createdAt: { type: Date, default: Date.now },
 });
