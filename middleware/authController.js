@@ -21,6 +21,12 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signUp = expressAsyncHandler(async (req, res, next) => {
+  if (req.body.password !== req.body.passwordConfirm) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Passwords do not match',
+    });
+  }
   const user = await User.create({
     userName: req.body.userName,
     fristName: req.body.fristName,
@@ -33,6 +39,7 @@ exports.signUp = expressAsyncHandler(async (req, res, next) => {
 });
 
 exports.logIn = expressAsyncHandler(async (req, res, next) => {
+  console.log(req.body);
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({

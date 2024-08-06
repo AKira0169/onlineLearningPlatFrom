@@ -29,6 +29,12 @@ const userSchema = new mongoose.Schema(
       enum: ['student', 'instructor', 'admin'],
       default: 'student',
     },
+    subscribedCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Course',
+      },
+    ],
     password: {
       type: String,
       required: [true, 'Please provide a password'],
@@ -38,12 +44,6 @@ const userSchema = new mongoose.Schema(
     passwordConfirm: {
       type: String,
       required: [true, 'Please confirm your password'],
-      validate: {
-        validator: function (el) {
-          return el === this.password; // `this` refers to the current document
-        },
-        message: 'Passwords are not the same!',
-      },
     },
     passwordChangedAt: Date,
     passwordResetToken: String,
@@ -63,15 +63,11 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined; // Remove passwordConfirm from document
-
+  this.passwordConfirm = undefined;
   next();
 });
-
-// Middleware to set passwordChangedAt field
 userSchema.pre('save', function (next) {
-  if (!this.isModified('password') && !this.isNew) return next();
-
+  if (!this.isModified('password') || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });

@@ -1,16 +1,19 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const path = require('path');
-const app = express();
 const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./middleware/errorHandler'); // Adjust the path to your global error handler
-// Middleware
 
+const app = express();
+
+// Middleware
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Set view engine
 app.set('view engine', 'ejs');
-
 app.set('views', path.join(__dirname, 'views'));
 
 // Define routes
@@ -25,12 +28,13 @@ app.get('/', (req, res) => {
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/payment', paymentRoutes);
-// Global error handling middleware
 
+// Handle undefined routes
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
+// Global error handling middleware
 app.use(globalErrorHandler);
 
 module.exports = app;
