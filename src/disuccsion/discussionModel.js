@@ -1,19 +1,7 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
-
-const discussionSchema = new Schema(
+const discussionSchema = new mongoose.Schema(
   {
-    referenceType: {
-      type: String,
-      enum: ['Course', 'Lesson'],
-      required: true,
-    },
-    referenceId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      refPath: 'referenceType', // This uses the value of `referenceType` to determine which model to reference
-    },
-    user: {
+    belong: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -47,6 +35,7 @@ const discussionSchema = new Schema(
       type: Number,
       default: 0,
     },
+    likedBy: [mongoose.Schema.Types.ObjectId],
   },
   {
     timestamps: true,

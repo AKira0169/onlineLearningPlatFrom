@@ -17,6 +17,8 @@ app.set('views', path.join(__dirname, 'views'));
 const usersRoutes = require('./src/users/usersRoutes');
 const courseRoutes = require('./src/courses/courseRoutes');
 const paymentRoutes = require('./src/payment/paymentRoutes');
+const discussionRoutes = require('./src/disuccsion/discussionRoute');
+
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/discussion', discussionRoutes);
 // Global error handling middleware
 
 app.all('*', (req, res, next) => {

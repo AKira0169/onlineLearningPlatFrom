@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
-
 const lessonSchema = new mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
     },
-    disucssion:{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"Disuccsion"
-    },
+    disucssion:[{
+     type:mongoose.Schema.Types.ObjectId,
+      ref:"Discussion"
+    
+  }],
     duration: {
       type: Number,
       required: true,
