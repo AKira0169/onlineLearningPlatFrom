@@ -22,7 +22,6 @@ exports.submitAnswers = expressAsyncHandler(async (req, res, next) => {
       const isCorrect = question.correctAnswer === answer.selectedOption;
       if (isCorrect) {
         correctAnswersCount++;
-
         return {
           questionId: answer.questionId,
           selectedOption: answer.selectedOption,
