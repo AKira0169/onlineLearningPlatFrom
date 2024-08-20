@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
 const quizSchema = new Schema(
   {
     title: {
@@ -18,6 +20,11 @@ const quizSchema = new Schema(
         correctAnswer: {
           type: String,
           required: true,
+          select: false, 
+        },
+        isAnswerCorrect: {
+          type: Boolean,
+          default: null, 
         },
       },
     ],
@@ -26,9 +33,10 @@ const quizSchema = new Schema(
       ref: 'Course',
       required: true,
     },
-    lesson: {
+    module: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Lesson',
+      ref: 'Module',
+      required: true,
     },
   },
   {
@@ -36,6 +44,6 @@ const quizSchema = new Schema(
   }
 );
 
-const Quiz = mongoose.model("Quiz", quizSchema);
+const Quiz = mongoose.model('Quiz', quizSchema);
 
 module.exports = Quiz;

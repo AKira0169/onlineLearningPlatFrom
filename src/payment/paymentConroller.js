@@ -3,17 +3,16 @@ const Payment = require('./paymentModel');
 const Course = require('../courses/courseModel');
 const User = require('../users/usersModel');
 const crypto = require('crypto');
-const AppError = require('../../utils/appError'); // Adjust the path to your AppError file
+const AppError = require('../../utils/appError'); 
 const PAYMOB_API_KEY = process.env.PAYMOB_API_KEY;
 const PAYMOB_INTEGRATION_ID_Online_Card = process.env.PAYMOB_INTEGRATION_ID_Online_Card;
 const PAYMOB_INTEGRATION_ID_Mobile_Wallet = process.env.PAYMOB_INTEGRATION_ID_Mobile_Wallet;
 const SECRET_KEY = process.env.Secret_Key;
 
-// Utility function to add a delay
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const calculateHmac = (data, secret) => {
-  // Destructure necessary fields from data
+
   const {
     amount_cents,
     created_at,
