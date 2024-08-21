@@ -20,11 +20,7 @@ const quizSchema = new Schema(
         correctAnswer: {
           type: String,
           required: true,
-          select: false, 
-        },
-        isAnswerCorrect: {
-          type: Boolean,
-          default: null, 
+          select: false,
         },
       },
     ],
@@ -41,7 +37,7 @@ const quizSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Quiz = mongoose.model('Quiz', quizSchema);
