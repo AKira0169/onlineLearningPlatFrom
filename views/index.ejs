@@ -4,13 +4,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
   <title>Document</title>
 </head>
 
 <body>
 
+  <div id="editor">
 
-  <form method="post" action="/api/v1/users/logIn">
+  </div>
+  <button id="submit">Submit</button>
+
+  <div>
+    <% Array.from(notes).forEach(note => { %>
+    <%- note.note %>
+    <% }) %>
+  </div>
+
+  <!-- Include the Quill library -->
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+
+  <!-- Initialize Quill editor -->
+  <script>
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+      ['code-block'],
+      [{
+        'header': 1
+      }, {
+        'header': 2
+      }], // custom button values
+      [{
+        'list': 'ordered'
+      }, {
+        'list': 'bullet'
+      }, {
+        'list': 'check'
+      }],
+
+      [{
+        'indent': '-1'
+      }, {
+        'indent': '+1'
+      }], // outdent/indent
+      [{
+        'direction': 'rtl'
+      }], // text direction
+
+      [{
+        'size': ['small', false, 'large', 'huge']
+      }], // custom dropdown
+      [{
+        'header': [1, 2, 3, 4, 5, 6, false]
+      }],
+
+      [{
+        'color': []
+      }, {
+        'background': []
+      }], // dropdown with defaults from theme
+      [{
+        'font': []
+      }],
+      [{
+        'align': []
+      }],
+      ['clean'] // remove formatting button
+    ];
+    const quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: toolbarOptions
+      }
+
+    });
+    document.getElementById('submit').addEventListener('click', function() {
+      const content = quill.root.innerHTML; // Get the HTML content from the editor
+      fetch('/api/v1/note/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            note: content
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+
+</body>
+
+
+
+
+
+</html>
+
+<!-- <script>
+    <form method="post" action="/api/v1/users/logIn">
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
     <label for="password">Password:</label>
@@ -20,10 +119,6 @@
 
   <button type="button" class="pay">pay</button>
 
-</body>
-
-
-<script>
   const pay = document.querySelector('.pay');
 
   pay.addEventListener('click', async () => {
@@ -67,6 +162,4 @@
       console.error('Error initiating payment:', error.message);
     }
   });
-</script>
-
-</html>
+</script> -->
