@@ -22,6 +22,7 @@ const courseRoutes = require('./src/courses/courseRoutes');
 const paymentRoutes = require('./src/payment/paymentRoutes');
 const discussionRoutes = require('./src/disuccsion/discussionRoute');
 const quizRoutes=require('./src/quiz/quizRoute')
+const traceStudent = require('./src/traceStudent/traceStudentRoute');
 
 app.get('/', (req, res) => {
   res.render('index');
@@ -32,6 +33,7 @@ app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/payment', paymentRoutes);
 app.use('/api/v1/discussion', discussionRoutes);
 app.use('/api/v1/quiz',quizRoutes);
+app.use('/api/v1/traceStudent', traceStudent);
 // Global error handling middleware
 
 // Handle undefined routes
