@@ -2,12 +2,15 @@ const axios = require('axios');
 const Payment = require('./paymentModel');
 const Course = require('../courses/courseModel');
 const User = require('../users/usersModel');
+const Conpon=require('../coupon/couponModel');
 const crypto = require('crypto');
-const AppError = require('../../utils/appError'); 
+const AppError = require('../../utils/appError');
 const PAYMOB_API_KEY = process.env.PAYMOB_API_KEY;
 const PAYMOB_INTEGRATION_ID_Online_Card = process.env.PAYMOB_INTEGRATION_ID_Online_Card;
 const PAYMOB_INTEGRATION_ID_Mobile_Wallet = process.env.PAYMOB_INTEGRATION_ID_Mobile_Wallet;
 const SECRET_KEY = process.env.Secret_Key;
+
+
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -41,14 +44,23 @@ const calculateHmac = (data, secret) => {
 
 exports.initiate = async (req, res, next) => {
   try {
-    const { currency, customer, courseId } = req.body;
+    const { currency, customer, courseId,couponId } = req.body;
 
     const course = await Course.findById(courseId);
     if (!course) {
       return next(new AppError('Course not found', 404));
     }
-    const coursePrice = course.price * 100;
-
+    let coursePrice;
+    const coupon=await Coupon.findById(couponId);
+    if(coupon){
+      const discountAmount = course.price * (coupon.discount / 100);
+      coursePrice=discountAmount*100;
+    }else{
+     coursePrice= course.price * 100;
+    }
+    
+  
+  
     // Step 1: Authentication
     const authResponse = await axios.post('https://accept.paymob.com/api/auth/tokens', {
       api_key: PAYMOB_API_KEY,
