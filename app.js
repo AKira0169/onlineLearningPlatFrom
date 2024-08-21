@@ -24,6 +24,8 @@ const discussionRoutes = require('./src/disuccsion/discussionRoute');
 const quizRoutes = require('./src/quiz/quizRoute');
 const traceStudent = require('./src/traceStudent/traceStudentRoute');
 
+const reviewRoutes = require('./src/review/reviewRoutes');
+
 app.get('/', (req, res) => {
   res.render('index');
 });
@@ -34,6 +36,7 @@ app.use('/api/v1/payment', paymentRoutes);
 app.use('/api/v1/discussion', discussionRoutes);
 app.use('/api/v1/quiz', quizRoutes);
 app.use('/api/v1/traceStudent', traceStudent);
+app.use('/api/v1/review', reviewRoutes);
 // Global error handling middleware
 
 // Handle undefined routes
