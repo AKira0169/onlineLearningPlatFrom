@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const socialInteractionSchema = new Schema(
+const couponSchema = new mongoose.Schema(
   {
     course: [
       {
@@ -8,14 +8,26 @@ const socialInteractionSchema = new Schema(
         ref: 'Course',
       },
     ],
-    discount: Number,
-    couponCode: String,
+    discount: {
+      type: Number,
+      required: true,
+    },
+    couponCode: {
+      type: String,
+      required: true, 
+      unique: true, 
+      set: (value) => value.toUpperCase(), 
+    },
+    expiryDate: {
+      type: Date,
+      required: true, 
+    },
   },
   {
     timestamps: true,
   },
 );
 
-const SocialInteraction = mongoose.model('SocialInteraction', socialInteractionSchema);
+const Coupon = mongoose.model('Coupon', couponSchema);
 
-module.exports = SocialInteraction;
+module.exports = Coupon;

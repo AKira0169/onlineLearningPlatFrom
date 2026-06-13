@@ -21,15 +21,25 @@ const usersRoutes = require('./src/users/usersRoutes');
 const courseRoutes = require('./src/courses/courseRoutes');
 const paymentRoutes = require('./src/payment/paymentRoutes');
 const discussionRoutes = require('./src/disuccsion/discussionRoute');
+const quizRoutes = require('./src/quiz/quizRoute');
+const traceStudent = require('./src/traceStudent/traceStudentRoute');
 
+const reviewRoutes = require('./src/review/reviewRoutes');
+const noteRoutes = require('./src/note/noteRoutes');
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.redirect('/api/v1/note/view');
 });
 
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/courses', courseRoutes);
 app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/discussion', discussionRoutes);
+app.use('/api/v1/quiz', quizRoutes);
+app.use('/api/v1/traceStudent', traceStudent);
+app.use('/api/v1/review', reviewRoutes);
+app.use('/api/v1/note', noteRoutes);
+
 // Global error handling middleware
 
 // Handle undefined routes
