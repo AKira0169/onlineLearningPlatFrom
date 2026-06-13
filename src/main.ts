@@ -27,6 +27,13 @@ async function bootstrap() {
 
   const port = process.env.PORT || 7000;
   await app.listen(port);
+
+  // Big-video uploads stream straight to Cloudinary and can take a long time. Node 18+ defaults
+  // `requestTimeout` to 5 min (the cap on receiving the *whole* body), which would abort a large
+  // upload mid-flight. Disable it; `headersTimeout` (60s default) still guards against slowloris.
+  const server = app.getHttpServer();
+  server.requestTimeout = 0;
+
   console.log(`App running on port ${port}`);
 }
 bootstrap();
