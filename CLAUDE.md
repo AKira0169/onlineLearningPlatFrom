@@ -74,8 +74,13 @@ helpers (`course.modules.id(moduleId)`, `module.lessons.id(lessonId)`) and persi
 
 **Video pipeline (streaming):**
 - Upload: `src/cloudinary/streaming-storage.ts` is a custom multer `StorageEngine` whose `_handleFile`
-  pipes `file.stream` straight into `cloudinary.uploader.upload_stream({ resource_type:'video',
-  type:'authenticated', folder:'videos', public_id:<originalname>-<uuid> })` — **no full-file buffer**.
+  pipes `file.stream` straight into `cloudinary.uploader.upload_chunked_stream({ resource_type:'video',
+  type:'authenticated', folder:'videos', public_id:<originalname>-<uuid>, chunk_size })` — **no
+  full-file buffer**, and the **chunked** uploader (vs. single-request `upload_stream`) supports
+  arbitrarily large videos with memory bounded to ~one chunk (default 20 MB, floored at Cloudinary's
+  5 MB minimum). `cb` is once-guarded and a `file.stream` `error` aborts the upload, so a client that
+  aborts a big upload mid-flight can't fire multer's callback twice or hang. `main.ts` sets
+  `server.requestTimeout = 0` so a long large-file upload isn't killed by Node's 5-min body timeout.
   Wired via `@UseInterceptors(FileInterceptor('video', { storage: streamingStorage('videos') }))`. On
   success `file.filename` = the Cloudinary **public_id**, stored in `lesson.videoUrl` (NOT a URL).
 - Playback: `GET courses/getLesson/:c/:m/:l/stream` (authed + subscription-gated) mints a 1h signed URL
@@ -93,7 +98,7 @@ flips `payment.status` and pushes the course into the buyer's `subscribedCourses
 ## Conventions & gotchas
 
 - **Load-bearing typos** — preserved verbatim in schemas; do not "fix" or you break reads/writes against
-  existing data: user field `fristName`; lesson discussion array `disucssion`.
+  existing data: user field `firstName`; lesson discussion array `disucssion`.
 - **Exact Mongoose model names (data compatibility)** — the model name (not the folder) sets the
   collection. `src/modules/review/` registers as **`Rating`** (collection `ratings`);
   `src/modules/traceStudent/` registers as **`StudentQuiz`** (collection `studentquizzes`). Always

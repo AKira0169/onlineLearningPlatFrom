@@ -5,7 +5,7 @@ import * as validator from 'validator';
 export type UserDocument = HydratedDocument<User>;
 
 /**
- * Port of `src/users/usersModel.js`. NOTE the load-bearing typo `fristName` is preserved verbatim —
+ * Port of `src/users/usersModel.js`. NOTE the load-bearing typo `firstName` is preserved verbatim —
  * existing documents store the field under that exact key.
  */
 @Schema({ timestamps: true })
@@ -14,7 +14,7 @@ export class User {
   userName: string;
 
   @Prop({ required: [true, 'Please provide a first name'] })
-  fristName: string;
+  firstName: string;
 
   @Prop({ required: [true, 'Please provide a last name'] })
   lastName: string;

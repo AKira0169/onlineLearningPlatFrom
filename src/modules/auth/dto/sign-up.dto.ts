@@ -7,7 +7,7 @@ export class SignUpDto {
 
   @IsString()
   @IsNotEmpty()
-  fristName: string;
+  firstName: string;
 
   @IsString()
   @IsNotEmpty()
